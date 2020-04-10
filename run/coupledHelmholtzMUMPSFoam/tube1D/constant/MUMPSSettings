@@ -1,0 +1,80 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      MUMPSSettings;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Hashtable with control parameters specified in MUMPS userguide.
+// 1st entry: number of the ICNTL setting.
+// 2nd entry: value of the setting.
+// Some of the settings are empty and default to appropriate values.
+ICNTL
+(
+    // 1: output stream for error messages
+    // ≤ 0: these messages will be suppressed.
+    // > 0 : is the output stream.
+    // Default value: 6 (standard output stream)
+    1 6
+
+    // 2: output stream for diagnostic printing, statistics, and warning message
+    // ≤ 0: these messages will be suppressed.
+    // > 0 : is the output stream.
+    // Default value: 0
+    2 0
+
+    // 3: output stream for global information, collected on the host
+    // ≤ 0: these messages will be suppressed.
+    // > 0 : is the output stream.
+    // Default value: 6 (standard output stream)
+    3 6
+
+    // 4: level of printing for error, warning, and diagnostic messages
+    // ≤ 0:
+    //  No messages output.
+        // 1:
+    //  Only error messages printed.
+    // 2:
+    //  Errors, warnings, and main statistics printed.
+    // 3:
+    //  Errors and warnings and terse diagnostics (only first ten entries of arrays) printed.
+    // ≥ 4 :
+    //  Errors, warnings and information on input, output parameters printed.
+    // Default value: 2 (errors and warnings printed)
+    4 2
+
+    // 11: Compute error statistics
+    // (0: none; 1: all incl. cond. number - expensive; 2: main stats);
+    11 0
+);
+
+// If not set residuals are printed. When solving a Jacobian they are not of
+// much help. Thus, the output can be suppressed by this setting.
+printResiduals yes;
+
+// File prefix for files linear system is written.
+dumpFilePrefix "dump";
+
+// Dumps complete matrix and RHS in two separate files.
+dumpCompleteLinSys no;
+
+// Dumps matrix and RHS from specified proc IDs list into files labeled by
+// proc ID.
+dumpLinSysFromProcs no;
+dumpProcIDList (0 1);
+
+// MUMPS provides built-in file writing capability.
+dumpLinSysByMUMPS no;
+dumpByMUMPSFileName "dumpLinSysByMUMPS";
+
+// ************************************************************************* //

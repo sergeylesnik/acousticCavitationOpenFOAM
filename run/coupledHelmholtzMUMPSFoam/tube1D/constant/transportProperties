@@ -1,0 +1,35 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      transportProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Real and imaginary parts of the squared wave number.
+//
+// Values for water at standard ambient conditions with cavitation bubbles
+// filled with Argon and
+//     pInf    = 101300 Pa      # pressure of surrounding liquid
+//     R0      = 5e-6 m         # bubble equilibrium radius
+//     beta    = 5e-5           # void fraction: bubble volume / total volume
+// acc. to linear damping theory of Commander&Prosperetti 1989:
+//     20kHz: kSqrRe = 13570, kSqrIm = -72.19
+//
+// Values for pure water at standard ambient conditions:
+//   20kHz: kSqrRe = 7018, kSqrIm = 0
+//   40kHz: kSqrRe = 28074, kSqrIm = 0
+
+kSqrRe          kSqrRe [ 0 -2 0 0 0 0 0 ] 13570;
+kSqrIm          kSqrIm [ 0 -2 0 0 0 0 0 ] -72.19;
+
+// ************************************************************************* //

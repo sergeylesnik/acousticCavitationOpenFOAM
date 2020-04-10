@@ -1,0 +1,10 @@
+EXE_INC = \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    $(PINC) \
+    -DOMPI_SKIP_MPICXX \
+    -DMPICH_SKIP_MPICXX
+
+EXE_LIBS = \
+    -lfiniteVolume \
+    -ldmumps \
+    $(PLIBS)

@@ -1,0 +1,7 @@
+coupledHelmholtzMUMPSFoam.C
+lnInclude/blockMUMPSSolver.C
+lnInclude/blockMUMPSSolverSer.C
+lnInclude/blockMUMPSSolverPar.C
+
+
+EXE = $(FOAM_USER_APPBIN)/coupledHelmholtzMUMPSFoam

@@ -1,0 +1,6 @@
+#!/bin/bash
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+runApplication blockMesh
+runApplication coupledHelmholtzMUMPSFoam

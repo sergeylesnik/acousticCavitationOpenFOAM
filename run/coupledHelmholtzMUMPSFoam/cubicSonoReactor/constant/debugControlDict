@@ -1,0 +1,14 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+
+DebugSwitches
+{
+    blockMUMPSSolver 1;
+    blockMUMPSSolverSer 1;
+    blockMUMPSSolverPar 1; 
+}

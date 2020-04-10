@@ -1,3 +1,16 @@
+# qtcreator
+*.autosave
+*.user*
+*.user
+*.creator
+*.files
+*.includes
+*.config
+
+# OpenFOAM
+*.dep
+
+# ### From github for C++ ##.#
 # Prerequisites
 *.d
 
