@@ -12,8 +12,8 @@ The only solver available right now is coupledHelmholtzMUMPSFoam which solves th
 * Clone or download this repository to your machine.
 * Install foam-extend (https://openfoamwiki.net/index.php/Installation/Linux/foam-extend-4.1).
 * Install MUMPS 
-    - from the package repository: ```sudo apt install mumps-test libmumps```
-    - or compile it on your own (http://mumps.enseeiht.fr).
+    - from the package repository: ```sudo apt install mumps-test libmumps libmumps-dev```
+    - or compile it on your own (http://mumps.enseeiht.fr)
 * Compile a solver from solvers/ using wmake.
 
 ## Usage
