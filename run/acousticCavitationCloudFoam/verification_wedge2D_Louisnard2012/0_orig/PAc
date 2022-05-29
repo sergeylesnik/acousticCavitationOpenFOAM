@@ -1,0 +1,58 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      PAc;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 -1 -2 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    Walls
+    {
+        type            zeroGradient;
+    }
+
+    Transducer
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+    
+    TransducerLateralWall
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+
+
+    FreeSurface
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+    
+    Front
+    {
+        type            wedge;
+    }
+    
+    Back
+    {
+        type            wedge;
+    }
+}
+
+// ************************************************************************* //

@@ -1,0 +1,40 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      dynamicMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include        "../system/numberOfSubdomains"
+
+dynamicFvMesh   myLoadBalanceFvMesh; //myLoadBalanceFvMesh loadBalanceFvMesh;
+
+myLoadBalanceFvMeshCoeffs
+{
+    imbalanceTrigger            0.8;
+    
+    injectedParcelsWeightAmplifier  0;
+    
+    useDecomposeParDict         yes;
+
+    method                      parMetisByParcels; //parMetisByParcels;
+
+    numberOfSubdomains          $nSubdomains;
+
+    parMetisByParcelsCoeffs
+    {
+        cellWeightsFile         "cellWeightsBalancing";
+    }
+    
+}
+
+// ************************************************************************* //

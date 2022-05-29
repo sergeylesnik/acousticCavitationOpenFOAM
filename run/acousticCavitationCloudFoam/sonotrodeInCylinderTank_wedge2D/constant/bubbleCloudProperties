@@ -1,0 +1,188 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      bubbleCloud1Properties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "bubbleGeneralPDFs"
+
+active          true;
+
+InjectionModel  PatchThresholdRndInjection; //none;
+
+DragModel       MagnaudetDrag;
+
+DispersionModel StochasticDispersionIncomprRAS;
+
+PatchInteractionModel LocalInteraction;
+
+PostProcessingModel none;
+
+coupled         true;
+
+cellValueSourceCorrection on;
+
+parcelTypeId    1;
+
+domainInitialInjection
+{
+    active                          yes;
+    useSettingsFromInjectionModel   yes;
+}
+
+PatchThresholdRndInjectionCoeffs
+{
+    SOI                                  0;
+    duration                             100;
+    parcelBasisType                      mass;
+    // Total mass to inject - no meaning for this injection model
+    massTotal  massTotal [1  0  0  0  0]    0;
+    
+    allowContinuousInjection            yes;
+    patchNames                          "(Transducer TransducerLateralWall Walls)";
+    referenceField                      voidFrac;
+    thresholdVoidFrac                   1.206e-5;
+    
+    // Equilibrium diameter (not radius!) distribution
+    parcelPDF
+    {
+        pdfType                          general;
+        generalPDF
+        {
+            distribution    $bubbleGeneralPDFs_jet;
+        }
+    }
+}
+
+constantProperties
+{
+    nMaxParticlesPerParcel  1000;
+    nMinParcelsPerCell      30;
+
+    rhoMin              rhoMin [1 -3 0 0 0] 1e-15;
+    rho0                rho0 [1 -3 0 0 0] 1.225;
+    minParticleMass     minParticleMass [1 0 0 0 0] 1e-15;
+    
+    // Acoustics
+    // Goettingen - 25kHz; Louisnard - 20.7kHz;
+    freq                frequency [0 0 -1 0 0] 20700;
+
+    // Static pressure of the liquid surrounding the bubble
+    pInf                pInf [1 -1 -2 0 0] 101300;
+    
+    // Surface tension for water-air pair
+    sigma               sigma [1 0 -2 0 0] 0.0725;
+    
+    // Properties of gas inside bubbles (for linear damping)
+    DThermal            thermalDiffusivity [0 2 -2 0 0] 2.2e-5;
+    gamma               gamma [0 0 0 0 0] 1.667;
+    
+    // Numerical parameter for smoothing of the Blake threshold step function
+    cavitationInceptionSmoothing 0.03;
+    ReAbsTol    1;
+}
+
+interpolationSchemes
+{
+    rho             cell;
+    mu              cell;
+    U               cellPointFace; //cellPointFace;
+    PAc             cellPointFace; //cellPointFace;
+    G               cellPointFace; //cellPointFace;
+    phiPAc          cell; // in radians (-pi, pi] => has to be "cell"
+    psi             cell; // in radians (-pi, pi] => has to be "cell"
+}
+
+integrationSchemes
+{
+    U               Euler;
+}
+
+particleForces
+{
+    gravity         on;
+    virtualMass     on;
+    pressureGradient on;
+    Cvm             0.5;
+    primaryBjerknes on;
+}
+
+damping
+{
+    viscous         on;
+    thermal         on;
+    radiation       off;
+}
+
+LocalInteractionCoeffs
+{
+    patches
+    (
+        Transducer
+        {
+            type    escape;
+        }
+        TransducerLateralWall
+        {
+            type    escape;
+        }
+        FreeSurface
+        {
+            type    escape;
+        }
+        Walls
+        {
+            type    escape;
+        }
+    );
+}
+
+// Interpolation 2D Tables
+PiViscousTable
+{
+    outOfBounds     clamp;
+    fileName        "constant/charactMap_PiVi_OF";
+}
+
+PiThermalTable
+{
+    outOfBounds     clamp;
+    fileName        "constant/charactMap_PiTh_OF";
+}
+
+IcTable
+{
+    outOfBounds     clamp;
+    fileName        "constant/charactMap_Ic_OF";
+}
+
+IsTable
+{
+    outOfBounds     clamp;
+    fileName        "constant/charactMap_Is_OF";
+}
+
+RAvTable
+{
+    outOfBounds     clamp;
+    fileName        "constant/charactMap_RAv_OF";
+}
+
+VAvTable
+{
+    outOfBounds     clamp;
+    fileName        "constant/charactMap_VAv_OF";
+}
+
+// ************************************************************************* //

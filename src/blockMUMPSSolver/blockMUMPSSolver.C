@@ -96,7 +96,12 @@ Foam::blockMUMPSSolver::blockMUMPSSolver
     );
     if (dumpByMUMPS)
     {
-        const word& fileName(MUMPSdict_.lookup("dumpByMUMPSFileName"));
+        const word& filePrefix(MUMPSdict_.lookup("dumpByMUMPSFileName"));
+        word fileName = filePrefix + "_Time_" + mesh_.time().timeName();
+        if (Pstream::parRun())
+        {
+            fileName += "_Proc_";
+        }
         strcpy(mumps_.write_problem, fileName.c_str());
     }
 
@@ -145,7 +150,12 @@ void Foam::blockMUMPSSolver::solveWithRhs
 {
     const Field<vector2>& x = matrix.psi().field();
     const Field<vector2>& b = matrix.source();
-    initialNormResidual_ = computeResidual(x, b, matrix);
+
+    // Compute residuals if only set by user.
+    if (printResiduals_)
+    {
+        initialNormResidual_ = computeResidual(x, b, matrix);
+    }
 
     getRhs(matrix);
 
@@ -153,10 +163,9 @@ void Foam::blockMUMPSSolver::solveWithRhs
 
     passSol();
 
-    finalNormResidual_ = computeResidual(x, b, matrix_);
-
     if (printResiduals_)
     {
+        finalNormResidual_ = computeResidual(x, b, matrix_);
         printResiduals();
     }
 }
@@ -275,7 +284,6 @@ void Foam::blockMUMPSSolver::addMatrixEntry
     label rowI, label colI, scalar aCoeff
 )
 {
-
     irn_[myid_][matrixI_] = rowI;
     jcn_[myid_][matrixI_] = colI;
     amv_[myid_][matrixI_] = aCoeff;
@@ -321,7 +329,7 @@ void Foam::blockMUMPSSolver::dumpMasterLinearSystem
 
     if (myid_ == 0)
     {
-        word fileName = filePrefix + "Matrix_Time" + mesh_.time().timeName();
+        word fileName = filePrefix + "_Matrix_Time_" + mesh_.time().timeName();
 
         if (debug)
         {
@@ -338,7 +346,7 @@ void Foam::blockMUMPSSolver::dumpMasterLinearSystem
         {
             forAll(irn_[procI], i)
             {
-                osMatrix.precision(12);
+                osMatrix.precision(32);
                 osMatrix << procI << " " << i
                    << " " << irn_[procI][i]
                    << " " << jcn_[procI][i]

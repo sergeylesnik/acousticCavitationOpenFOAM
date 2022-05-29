@@ -44,6 +44,8 @@ SourceFiles
 #include "dynamicLabelList.H"
 #include "processorPolyPatch.H"
 
+#include "globalIndex.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -68,9 +70,6 @@ class blockMUMPSSolverPar
         //- Number of proc-to-proc faces on the proc
         label nProcFaces_;
 
-        //- Addressing of local cells on the proc in the global scope
-        labelIOList localCellProcAddr_;
-
         //- Internal faces on the processor: lower and upper addressing
         const labelList& lAddr_;
         const labelList& uAddr_;
@@ -87,12 +86,16 @@ class blockMUMPSSolverPar
         //- Global IDs of rows on the proc needed for RHS reordering on master
         labelListList rhsGlobalIDs_;
 
+        //- Global IDs of cells which are computed on the fly in inconclusive
+        //  order. Since procPatches are exchanged also on the fly, no need
+        //  in the exact cellProcAddressing.
+        globalIndex globalCells_;
+
         //- Right hand side of the whole linear system; used on master only.
         //  Solution is stored after the MUMPS solver call.
         scalarList rhsMaster_;
 
-
-        //
+        //- Switch for dumping and dumping object
         const bool dumpLinSysFromProcs_;
         labelList dumpProcIDs_;
 

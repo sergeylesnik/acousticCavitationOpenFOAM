@@ -1,0 +1,4 @@
+wclean ../src/decompositionMethods/myDecomposeReconstruct/ 
+wclean ../src/dynamicMesh/myTopoChangerFvMesh/ 
+wclean ../src/dynamicMesh/myLoadBalanceFvMesh/ 
+wclean

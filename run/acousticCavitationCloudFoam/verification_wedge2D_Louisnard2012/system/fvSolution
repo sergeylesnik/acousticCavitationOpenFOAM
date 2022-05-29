@@ -1,0 +1,136 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+newtonRaphson
+{
+    maxOuterInitIter        0;
+    initDamping             0.001;
+    minDamping              1e-4;
+    maxRecoveryDamping      0.075;
+    nRaiseRecovery          10;
+    maxOuterIterations      1000;
+    residualControl         1e-5;
+    residualNorm            scaledL1Norm;
+}
+
+solvers
+{
+    pcorr
+    {
+        solver          PCG;
+        preconditioner  DIC;
+        tolerance       0.01;
+        relTol          0;
+    }
+
+    p
+    {
+        solver          PCG;
+        preconditioner  DIC;
+        tolerance       1e-06;
+        relTol          0;
+    }
+    
+    pFinal
+    {
+        $p;
+        relTol          0;
+    }
+
+    U
+    {
+        solver          BiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-08;
+        relTol          0;
+    }
+    
+    UFinal
+    {
+        $U;
+        relTol          0;
+    }
+    
+    k
+    {
+        solver          BiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-05;
+        relTol          0;
+    }
+
+    omega
+    {
+        solver          BiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-05;
+        relTol          0;
+    }
+}
+
+PIMPLE
+{
+    momentumPredictor   yes;
+    correctPhi          no;
+    nOuterCorrectors    5;
+    nCorrectors         2;
+    nNonOrthogonalCorrectors 0;
+    pRefCell        0;
+    pRefValue       0;
+    
+    residualControl
+    {
+        "(U|k|omega)"
+        {
+            relTol      0;
+            tolerance   1e-4;
+        }
+    }
+}
+
+relaxationFactors
+{
+    p               1;
+    U               1;
+    UFinal          1;
+
+//     If defined within subdictionaries, the relaxation will be applied only
+//     on the corresponding class.
+//     If other class also needs to be relaxed, it has to be defined
+//     inside the subdictionary
+//     fields
+//     {
+//         PAcRe   0.51;
+//         PAcIm   0.51;
+//     }
+    
+//     equations
+//     {
+//         PAcRe   0.7;
+//     }
+
+//     If no subdictionary defined, relaxation is applied only to equations
+//     PAcRe   0.7;
+//     Above is equivalent to:
+//     equations
+//     {
+//         PAcRe           0.7;
+//     }
+
+}
+
+// ************************************************************************* //

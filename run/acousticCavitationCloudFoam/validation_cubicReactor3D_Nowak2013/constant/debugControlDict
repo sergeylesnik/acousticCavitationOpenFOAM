@@ -1,0 +1,19 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+
+DebugSwitches
+{
+    dimensionSet 0;
+    volPointInterpolation 0;
+    pointPatchInterpolation 0;
+    topoChangerFvMesh 0;
+    regIOobject 0;
+    OFstream 0;
+    processorMeshesReconstructor 0;
+    acCavitationParcel 0;
+}

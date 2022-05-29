@@ -54,21 +54,10 @@ Foam::blockMUMPSSolverPar::blockMUMPSSolverPar
     nNzLoc_(0),
     nRhsLoc_(0),
     nProcFaces_(0),
-    localCellProcAddr_
-    (
-        IOobject
-        (
-        "cellProcAddressing",
-        mesh_.facesInstance(),
-        mesh_.meshSubDir,
-        mesh_,
-        IOobject::MUST_READ,
-        IOobject::NO_WRITE
-        )
-    ),
     lAddr_(matrix.lduAddr().lowerAddr()),
     uAddr_(matrix.lduAddr().upperAddr()),
     rhsGlobalIDs_(Pstream::nProcs()),
+    globalCells_(nCells_),
     dumpLinSysFromProcs_
     (
         MUMPSdict_.lookupOrDefault<Switch>("dumpLinSysFromProcs", 0)
@@ -143,6 +132,7 @@ void Foam::blockMUMPSSolverPar::solveCore()
         Info<< "Gathering the right hand side on master before MUMPS call"
             << endl;
     }
+
     gatherRhs();
 
     solveMUMPS();
@@ -152,6 +142,7 @@ void Foam::blockMUMPSSolverPar::solveCore()
         Info<< "Redistributing solution to the slaves acc. to OF mapping"
             << endl;
     }
+
     scatterSol();
 }
 
@@ -161,7 +152,7 @@ Foam::label Foam::blockMUMPSSolverPar::diagInd
     label i
 )
 {
-    return 2 * localCellProcAddr_[i];
+    return 2 * globalCells_.toGlobal(i);
 }
 
 void Foam::blockMUMPSSolverPar::setOwnerNeighbInd
@@ -172,11 +163,11 @@ void Foam::blockMUMPSSolverPar::setOwnerNeighbInd
 )
 {
     // Indices of the owners of the face
-    ownerI = 2 * localCellProcAddr_[lAddr_[faceI]];
+    ownerI = 2 * globalCells_.toGlobal(lAddr_[faceI]);
 
     // Indices of the neighbours of the owner cells
     // which share the same face
-    neighbourI = 2 * localCellProcAddr_[uAddr_[faceI]];
+    neighbourI = 2 * globalCells_.toGlobal(uAddr_[faceI]);
 }
 
 void Foam::blockMUMPSSolverPar::exchangeProcPatches()
@@ -239,7 +230,7 @@ void Foam::blockMUMPSSolverPar::exchangeProcPatches()
             faceI++
         )
         {
-            sendBuf[i] = localCellProcAddr_[mesh_.faceOwner()[faceI]];
+            sendBuf[i] = globalCells_.toGlobal(mesh_.faceOwner()[faceI]);
             i++;
         }
 
@@ -298,11 +289,11 @@ void Foam::blockMUMPSSolverPar::assembleProcPatchOffDiag()
             // -> premultiply by -1 to obtain true value
 
             // Order the local owner index to the global one
-            ownerI = 2 * localCellProcAddr_
-                    [
+            ownerI = 2 * globalCells_.toGlobal
+                    (
                         // Get the local owner index of the procFaceI
                         matrix_.lduAddr().patchAddr(patchGlobalI)[procFaceI]
-                    ];
+                    );
 
             neighbourI =
                     2 * neighbProcFaceOwners_[neighbourProcNo][procFaceI];
@@ -345,7 +336,7 @@ void Foam::blockMUMPSSolverPar::gatherRhs()
 {
     Pstream::gatherList(rhs_);
 
-    // rhsGlobalIDs_ hast to be gathered and rhsMaster_ resized before.
+    // rhsGlobalIDs_ has to be gathered and rhsMaster_ resized before.
     // Order the RHS on Master acc. to the global row index.
     // Note that the first entry is 1 in MUMPS and 0 in OF List.
     if (Pstream::master())
@@ -364,8 +355,9 @@ void Foam::blockMUMPSSolverPar::gatherRhs()
 
 void Foam::blockMUMPSSolverPar::scatterSol()
 {
-    // rhs_ contains solution after MUMPS call.
-    // Order the RHS on Slaves acc. to the OF mapping.
+    // rhsMaster_ contains solution after MUMPS call.
+    // Order the RHS on Slaves acc. to the OF mapping. Use auxillary list rhs_
+    // to match the mapping.
     // Note that the first entry is 1 in MUMPS and 0 in OF List.
     if (Pstream::master())
     {
@@ -400,7 +392,7 @@ void Foam::blockMUMPSSolverPar::dumpCompleteRhs(fileName filePrefix)
         {
             forAll(rhs_[procI], i)
             {
-                osRhs.precision(12);
+                osRhs.precision(32);
                 osRhs << procI << " " << i
                       << " " << rhsGlobalIDs_[procI][i]
                       << " " << rhs_[procI][i] << endl;

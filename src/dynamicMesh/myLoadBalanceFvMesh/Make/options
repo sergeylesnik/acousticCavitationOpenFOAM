@@ -1,0 +1,14 @@
+EXE_INC = \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/dynamicMesh/dynamicMesh/lnInclude \
+    -I$(LIB_SRC)/dynamicMesh/dynamicFvMesh/lnInclude \
+    -I../../dynamicMesh/myTopoChangerFvMesh/lnInclude \
+    -I../../decompositionMethods/myDecomposeReconstruct/lnInclude
+
+LIB_LIBS = \
+    -lfiniteVolume \
+    -ldynamicMesh \
+    -ldynamicFvMesh \
+    -L$(FOAM_USER_LIBBIN) \
+    -lmyTopoChangerFvMesh \
+    -lmyDecomposeReconstruct

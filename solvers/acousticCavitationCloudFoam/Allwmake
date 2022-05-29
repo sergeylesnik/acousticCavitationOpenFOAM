@@ -1,0 +1,4 @@
+wmake libso ../../src/decompositionMethods/myDecomposeReconstruct/ 
+wmake libso ../../src/dynamicMesh/myTopoChangerFvMesh/ 
+wmake libso ../../src/dynamicMesh/myLoadBalanceFvMesh/ 
+wmake

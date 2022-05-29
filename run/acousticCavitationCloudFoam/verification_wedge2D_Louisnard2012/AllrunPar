@@ -1,0 +1,19 @@
+#!/bin/bash
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+export caseName=`basename $PWD`
+
+echo "$caseName: Creating a dummy .foam file for postprocessing with paraview"
+touch $caseName.foam
+
+echo "$caseName: Copying time directory 0 from 0_orig"
+cp -r 0_orig/. 0
+
+echo "$caseName: Running m4 on constant/polyMesh/blockMeshDict.m4"
+m4 constant/polyMesh/blockMeshDict.m4 > constant/polyMesh/blockMeshDict
+
+runApplication blockMesh
+runApplication decomposePar
+runParallel acousticCavitationCloudFoam 4
+runApplication reconstructParMesh

@@ -1,0 +1,3 @@
+parMetisByParcelsDecomp.C
+
+LIB = $(FOAM_USER_LIBBIN)/libparMetisByParcelsDecomp

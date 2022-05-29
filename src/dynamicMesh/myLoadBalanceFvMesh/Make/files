@@ -1,0 +1,3 @@
+myLoadBalanceFvMesh/myLoadBalanceFvMesh.C
+
+LIB = $(FOAM_USER_LIBBIN)/libmyLoadBalanceFvMesh
