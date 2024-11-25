@@ -29,9 +29,14 @@ official release yet.
 
 ## Installation
 ### Known to work with
-* Ubuntu 16.04
+* Ubuntu 20.04
+* foam-extend 5.0
+* MUMPS 5.2.1
+
+See branch `foam-extend-4.1` for the following setups
+* Ubuntu 16.04, 20.04
 * foam-extend 4.1
-* MUMPS 4.10.0
+* MUMPS 4.10.0, 5.2.1
 
 ### Steps
 * Clone or download this repository to your machine.

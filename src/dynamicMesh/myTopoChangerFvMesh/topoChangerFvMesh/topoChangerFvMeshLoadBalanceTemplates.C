@@ -385,7 +385,7 @@ void Foam::topoChangerFvMesh::rebuildFields
     )
     {
         GeoField& masterField = const_cast<GeoField&>(*iter());
-        masterField.boundaryField().evaluateCoupled();
+        masterField.boundaryField().updateCoupledPatchFields();
     }
 }
 
