@@ -13,13 +13,13 @@ template<class ParcelType>
 void Foam::AcCavitationCloud<ParcelType>::injectParcelInCell
 (
     const fvMesh& mesh,
-    const vector& deltaCoord, 
-    const vector& minCoord, 
+    const vector& deltaCoord,
+    const vector& minCoord,
     const meshSearch& searchEngine,
     const autoPtr<pdf>& parcelPdf,
     const label cellI,
     const scalar VCellI,
-    scalar nP, 
+    scalar nP,
     label& injCounter,
     scalar& voidFracCellI
 )
@@ -526,13 +526,13 @@ void Foam::AcCavitationCloud<ParcelType>::injectDomainInit()
             injectParcelInCell
             (
                 mesh,
-                deltaCoord, 
-                minCoord, 
+                deltaCoord,
+                minCoord,
                 searchEngine,
                 parcelInitPdf,
                 cellI,
                 VCellI,
-                nPCorr, 
+                nPCorr,
                 injCounter,
                 voidFracCellI
             );
@@ -551,13 +551,13 @@ void Foam::AcCavitationCloud<ParcelType>::injectDomainInit()
                 injectParcelInCell
                 (
                     mesh,
-                    deltaCoord, 
-                    minCoord, 
+                    deltaCoord,
+                    minCoord,
                     searchEngine,
                     parcelInitPdf,
                     cellI,
                     VCellI,
-                    nPCorr, 
+                    nPCorr,
                     injCounter,
                     voidFracCellI
                 );
@@ -690,7 +690,7 @@ void Foam::AcCavitationCloud<ParcelType>::computeImagWaveNumber
     const dimensionedScalar& omega = ldwn.omegaDim();
     const dimensionedScalar& rhoc = ldwn.rhoLiquidDim();
     const DimensionedField<scalar, volMesh>& cellVolumes = this->mesh().V();
-    
+
     dimensionedScalar PAcUnit("PAcUnit", dimPressure, 1.0);
     kSqrIm =
         -2.0*rhoc*omega*PiTotal_.dimensionedInternalField()

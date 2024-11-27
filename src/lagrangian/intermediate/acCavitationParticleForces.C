@@ -127,7 +127,7 @@ void Foam::acCavitationParticleForces::cacheFields(const bool store)
      && (pressureGradient_ || virtualMass_)
     )
     {
-        const volVectorField U = mesh_.lookupObject<volVectorField>(UName_);
+        const volVectorField& U = mesh_.lookupObject<volVectorField>(UName_);
         gradUPtr_ = fvc::grad(U).ptr();
     }
     else
